@@ -3,6 +3,7 @@ package com.example.pokedex.ui
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.pokedex.data.Pokemon
 
 class ViewModlePoke: ViewModel() {
 
@@ -13,4 +14,7 @@ class ViewModlePoke: ViewModel() {
         _uiState.value = _uiState.value.copy(name = text)
     }
 
+    fun updateResponse(newResponse: Pokemon?) {
+        _uiState.value = uiState.value.copy(response = newResponse)
+    }
 }

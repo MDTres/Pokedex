@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -46,6 +51,7 @@ import com.example.pokedex.ui.theme.PokedexTheme
 import com.example.pokedex.ui.theme.PokedexYellow
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -127,7 +133,9 @@ fun MainScreen(
                         .clickable {                // clic dentro del Modifier
                             scope.launch {
                                 try {
-                                    uiState.response = RetroFitClient.api.getPokemon(uiState.name)
+                                    val result = RetroFitClient.api.getPokemon(uiState.name.lowercase())
+                                    // Llamamos a la función del ViewModel en lugar de reasignar aquí
+                                    viewModle.updateResponse(result)
                                 } catch (e: Exception) {
                                     Log.e("API_ERROR", "Error: ${e.message}")
                                 }
@@ -145,30 +153,95 @@ fun MainScreen(
 
             }
 
-            Column {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally // Centra la Row horizontalmente
+            ) {
                 Row(
                     modifier = Modifier
-                        .background(Color(0xFFD32F2F))
-                        .padding(8.dp)
-                ){
-                    Text(text = "Nombre: ${uiState.response?.name}",
-                        modifier = Modifier.weight(1f),
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center)
-                    Text(text = "ID: ${uiState.response?.id}",
-                        modifier = Modifier.weight(1f),
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center)
+                        .fillMaxWidth() // Para que el Row ocupe todo el ancho
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.Center, // Centra los dos bloques en la pantalla
+                    verticalAlignment = Alignment.Bottom // Alinea los boxes por la base
+                ) {
+                    // Bloque para el NOMBRE
+                    Column(horizontalAlignment = Alignment.Start) {
+                        Text(
+                            text = "Nombre:",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .widthIn(min = 160.dp)
+                                .height(50.dp)// Ancho mínimo para que el box sea más grande
+                                .background(Color(0xFFD32F2F), shape = RoundedCornerShape(10.dp))
+                                .padding(horizontal = 24.dp, vertical = 12.dp), // Más padding = Box más grande
+                            contentAlignment = Alignment.Center
+                        ) {
+                            uiState.response?.let { data ->
+                                Text(
+                                    text = data.name.replaceFirstChar { it.uppercase() },
+                                    color = Color.White,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(20.dp)) // Espacio entre Nombre e ID
+
+                    // Bloque para el ID
+                    Column(horizontalAlignment = Alignment.Start) {
+                        Text(
+                            text = "ID:",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .widthIn(min = 100.dp)
+                                .height(50.dp)// Ancho mínimo específico para el ID
+                                .background(Color(0xFFD32F2F),
+                                    shape = RoundedCornerShape(10.dp))
+                                .padding(horizontal = 24.dp, vertical = 12.dp), // Mismo padding para consistencia
+                            contentAlignment = Alignment.Center
+                        ) {
+                            uiState.response?.let { data ->
+                                Text(
+                                    text = "#${data.id}",
+                                    color = Color.White,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
                 }
+
 
                 val imageUrl =
                     uiState.response?.sprites?.other?.oficialArtwork?.front_default
 
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = uiState.response?.name,
-                    modifier = Modifier.size(400.dp).fillMaxSize()
-                )
+                Box(
+                    modifier = Modifier
+                        .size(350.dp)           // tamaño del Box
+                        .background(Color(0xFF6B9B46), shape = RoundedCornerShape(10.dp))
+                    .padding(horizontal = 24.dp, vertical = 12.dp),// margen externo
+                ) {
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = uiState.response?.name,
+                        modifier = Modifier
+                            .fillMaxSize() // la imagen ocupa todo el Box
+                    )
+                }
+
 
                 Text(
                     text = uiState.response?.types
