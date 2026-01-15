@@ -128,13 +128,13 @@ fun MainScreen(
                 Box(
                     modifier = Modifier
                         .size(50.dp)
-                        .clip(CircleShape)          // botón redondo
-                        .background(PokedexRed)     // color del botón
-                        .clickable {                // clic dentro del Modifier
+                        .clip(CircleShape)
+                        .background(PokedexRed)
+                        .clickable {
                             scope.launch {
                                 try {
                                     val result = RetroFitClient.api.getPokemon(uiState.name.lowercase())
-                                    // Llamamos a la función del ViewModel en lugar de reasignar aquí
+
                                     viewModle.updateResponse(result)
                                 } catch (e: Exception) {
                                     Log.e("API_ERROR", "Error: ${e.message}")
@@ -155,14 +155,14 @@ fun MainScreen(
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally // Centra la Row horizontalmente
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth() // Para que el Row ocupe todo el ancho
+                        .fillMaxWidth()
                         .padding(16.dp),
-                    horizontalArrangement = Arrangement.Center, // Centra los dos bloques en la pantalla
-                    verticalAlignment = Alignment.Bottom // Alinea los boxes por la base
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.Bottom
                 ) {
                     // Bloque para el NOMBRE
                     Column(horizontalAlignment = Alignment.Start) {
@@ -176,9 +176,9 @@ fun MainScreen(
                         Box(
                             modifier = Modifier
                                 .widthIn(min = 160.dp)
-                                .height(50.dp)// Ancho mínimo para que el box sea más grande
+                                .height(50.dp)
                                 .background(Color(0xFFD32F2F), shape = RoundedCornerShape(10.dp))
-                                .padding(horizontal = 24.dp, vertical = 12.dp), // Más padding = Box más grande
+                                .padding(horizontal = 24.dp, vertical = 12.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             uiState.response?.let { data ->
@@ -192,9 +192,8 @@ fun MainScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.width(20.dp)) // Espacio entre Nombre e ID
+                    Spacer(modifier = Modifier.width(20.dp))
 
-                    // Bloque para el ID
                     Column(horizontalAlignment = Alignment.Start) {
                         Text(
                             text = "ID:",
@@ -242,12 +241,40 @@ fun MainScreen(
                     )
                 }
 
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
 
-                Text(
-                    text = uiState.response?.types
-                        ?.joinToString(", ") { it.type.name }
-                        ?: ""
-                )
+                    Text(
+                        text = "Tipos:",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+
+                        )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+
+
+                        uiState.response?.types?.forEach { typeItem ->
+                            Image(
+                                painter = painterResource(
+                                    id = getTypeImageByName(typeItem.type.name)
+                                ),
+                                contentDescription = typeItem.type.name,
+                                modifier = Modifier
+                                    .size(75.dp)
+                                    .padding(horizontal = 6.dp)
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -259,5 +286,29 @@ fun MainScreen(
 fun GreetingPreview() {
     PokedexTheme {
         MainScreen()
+    }
+}
+
+fun getTypeImageByName(type: String): Int {
+    return when (type.lowercase()) {
+        "normal" -> R.drawable.normal
+        "fire" -> R.drawable.fuego
+        "water" -> R.drawable.agua
+        "grass" -> R.drawable.planta
+        "electric" -> R.drawable.electrico
+        "ice" -> R.drawable.hielo
+        "fighting" -> R.drawable.lucha
+        "poison" -> R.drawable.veneno
+        "ground" -> R.drawable.tierra
+        "flying" -> R.drawable.volador
+        "psychic" -> R.drawable.psiquico
+        "bug" -> R.drawable.bicho
+        "rock" -> R.drawable.roca
+        "ghost" -> R.drawable.fantasma
+        "dragon" -> R.drawable.dragon
+        "dark" -> R.drawable.siniestro
+        "steel" -> R.drawable.acero
+        "fairy" -> R.drawable.hada
+        else -> R.drawable.type_unknown
     }
 }
