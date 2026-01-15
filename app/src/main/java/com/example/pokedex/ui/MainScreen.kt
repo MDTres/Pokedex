@@ -46,6 +46,7 @@ import com.example.pokedex.ui.theme.PokedexTheme
 import com.example.pokedex.ui.theme.PokedexYellow
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pokedex.data.Pokemon
@@ -145,23 +146,36 @@ fun MainScreen(
             }
 
             Column {
-                Text(text = "${uiState.response?.name}")
-                Text(text = "${uiState.response?.id}")
+                Row(
+                    modifier = Modifier
+                        .background(Color(0xFFD32F2F))
+                        .padding(8.dp)
+                ){
+                    Text(text = "Nombre: ${uiState.response?.name}",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center)
+                    Text(text = "ID: ${uiState.response?.id}",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center)
+                }
+
+                val imageUrl =
+                    uiState.response?.sprites?.other?.oficialArtwork?.front_default
+
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = uiState.response?.name,
+                    modifier = Modifier.size(400.dp).fillMaxSize()
+                )
+
                 Text(
                     text = uiState.response?.types
                         ?.joinToString(", ") { it.type.name }
                         ?: ""
                 )
             }
-
-            val imageUrl =
-                uiState.response?.sprites?.other?.oficialArtwork?.front_default
-
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = uiState.response?.name,
-                modifier = Modifier.size(200.dp)
-            )
         }
 
     }
