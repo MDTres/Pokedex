@@ -266,7 +266,7 @@ fun MainScreen(
                         uiState.response?.types?.forEach { typeItem ->
                             Image(
                                 painter = painterResource(
-                                    id = getTypeImageByName(typeItem.type.name)
+                                    id = viewModle.getTypeImageByName(typeItem.type.name)
                                 ),
                                 contentDescription = typeItem.type.name,
                                 modifier = Modifier
@@ -290,26 +290,3 @@ fun GreetingPreview() {
     }
 }
 
-fun getTypeImageByName(type: String): Int {
-    return when (type.lowercase()) {
-        "normal" -> R.drawable.normal
-        "fire" -> R.drawable.fuego
-        "water" -> R.drawable.agua
-        "grass" -> R.drawable.planta
-        "electric" -> R.drawable.electrico
-        "ice" -> R.drawable.hielo
-        "fighting" -> R.drawable.lucha
-        "poison" -> R.drawable.veneno
-        "ground" -> R.drawable.tierra
-        "flying" -> R.drawable.volador
-        "psychic" -> R.drawable.psiquico
-        "bug" -> R.drawable.bicho
-        "rock" -> R.drawable.roca
-        "ghost" -> R.drawable.fantasma
-        "dragon" -> R.drawable.dragon
-        "dark" -> R.drawable.siniestro
-        "steel" -> R.drawable.acero
-        "fairy" -> R.drawable.hada
-        else -> R.drawable.type_unknown
-    }
-}
