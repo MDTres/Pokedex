@@ -91,7 +91,6 @@ fun MainScreen() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(colorResource(R.color.secundario))
                     .padding(10.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
@@ -137,9 +136,16 @@ fun MainScreen() {
                 }
             }
 
-            Row {
+            Column {
                 Text(text = "${response?.name}")
+                Text(text = "${response?.id}")
+                Text(
+                    text = response?.types
+                        ?.joinToString(", ") { it.type.name }
+                        ?: ""
+                )
             }
+            Text(text = "${response?.sprites?.other?.oficialArtwork?.front_default}")
 
         }
 
