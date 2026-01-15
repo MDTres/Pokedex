@@ -55,18 +55,17 @@ import com.example.pokedex.ui.theme.PokedexRed
 import com.example.pokedex.ui.theme.Primario
 import kotlinx.coroutines.launch
 
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    var name by rememberSaveable { mutableStateOf("") }
-    var idPokedex by rememberSaveable { mutableStateOf("") }
-    var isShiny by rememberSaveable { mutableStateOf(false) }
-    var response by rememberSaveable { mutableStateOf<Pokemon?>(null) }
+fun MainScreen(
+    viewModle: ViewModlePoke = viewModel(),
+) {
+    val uiState by viewModle.uiState
+
     val scope = rememberCoroutineScope()
-
-
-
 
 
     Scaffold(
@@ -104,12 +103,12 @@ fun MainScreen() {
                 Image(
                     modifier = Modifier
                         .size(50.dp),
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    painter = painterResource(id = R.drawable.pokebola_pokeball_png_0),
                     contentDescription = "Logo Rae",
                 )
                 OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
+                    value = uiState.name,
+                    onValueChange = { viewModle.onNameChange(it) },
                     placeholder = { Text("Palabra") },
                     singleLine = true,
                     modifier = Modifier
@@ -127,7 +126,7 @@ fun MainScreen() {
                         .clickable {                // clic dentro del Modifier
                             scope.launch {
                                 try {
-                                    response = RetroFitClient.api.getPokemon(name)
+                                    uiState.response = RetroFitClient.api.getPokemon(uiState.name)
                                 } catch (e: Exception) {
                                     Log.e("API_ERROR", "Error: ${e.message}")
                                 }
@@ -146,21 +145,21 @@ fun MainScreen() {
             }
 
             Column {
-                Text(text = "${response?.name}")
-                Text(text = "${response?.id}")
+                Text(text = "${uiState.response?.name}")
+                Text(text = "${uiState.response?.id}")
                 Text(
-                    text = response?.types
+                    text = uiState.response?.types
                         ?.joinToString(", ") { it.type.name }
                         ?: ""
                 )
             }
 
             val imageUrl =
-                response?.sprites?.other?.oficialArtwork?.front_default
+                uiState.response?.sprites?.other?.oficialArtwork?.front_default
 
             AsyncImage(
                 model = imageUrl,
-                contentDescription = response?.name,
+                contentDescription = uiState.response?.name,
                 modifier = Modifier.size(200.dp)
             )
         }
