@@ -13,3 +13,10 @@ val White = Color(0xFFFFFFFF)
 val Verde = Color(0xFF008000)
 val Primario = Color(0xFF595646)
 val Secundario = Color(0xFFEBE0D1)
+
+
+val PokedexRed = Color(0xFFD32F2F)
+val PokedexDarkRed = Color(0xFFB71C1C)
+val PokedexYellow = Color(0xFFFFEB3B)
+val PokedexBlue = Color(0xFF1976D2)
+val PokedexWhite = Color(0xFFF5F5F5)

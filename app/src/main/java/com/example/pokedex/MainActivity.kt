@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pokedex.data.Pokemon
 import com.example.pokedex.data.RetroFitClient
+import com.example.pokedex.ui.MainScreen
 import com.example.pokedex.ui.theme.PokedexTheme
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -61,10 +62,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PokedexTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    MainScreen()
                 }
             }
         }
