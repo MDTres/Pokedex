@@ -11,7 +11,7 @@ val Teal700 = Color(0xFF018786)
 val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
 val Verde = Color(0xFF008000)
-val Primario = Color(0xFF595646)
+val Primario = Color(0xFF606060)
 val Secundario = Color(0xFFEBE0D1)
 
 

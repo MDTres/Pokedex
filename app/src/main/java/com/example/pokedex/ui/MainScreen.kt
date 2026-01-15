@@ -2,6 +2,7 @@ package com.example.pokedex.ui
 
 import android.util.Log
 import android.widget.ImageView
+import coil.compose.AsyncImage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -66,10 +71,11 @@ fun MainScreen() {
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Text(
                     text = "Pokedex",
+
                     fontFamily = FontFamily(Font(R.font.pokemonfont)),
                     color = PokedexYellow,
                     fontSize = 34.sp
@@ -116,24 +122,27 @@ fun MainScreen() {
                 Box(
                     modifier = Modifier
                         .size(50.dp)
-                        .clip(CircleShape) // botón redondo
-                        .background(colorResource(R.color.secundario)) // color del botón
-                        .clickable {
+                        .clip(CircleShape)          // botón redondo
+                        .background(PokedexRed)     // color del botón
+                        .clickable {                // clic dentro del Modifier
                             scope.launch {
                                 try {
-                                     response = RetroFitClient.api.getPokemon(name)
+                                    response = RetroFitClient.api.getPokemon(name)
                                 } catch (e: Exception) {
                                     Log.e("API_ERROR", "Error: ${e.message}")
                                 }
-                            }                    },
+                            }
+                        },
                     contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_background),
+                    Icon(
+                        imageVector = Icons.Filled.Search, // lupa
                         contentDescription = "Buscar",
+                        tint = Color.White,
                         modifier = Modifier.size(35.dp)
                     )
                 }
+
             }
 
             Column {
@@ -145,8 +154,15 @@ fun MainScreen() {
                         ?: ""
                 )
             }
-            Text(text = "${response?.sprites?.other?.oficialArtwork?.front_default}")
 
+            val imageUrl =
+                response?.sprites?.other?.oficialArtwork?.front_default
+
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = response?.name,
+                modifier = Modifier.size(200.dp)
+            )
         }
 
     }
