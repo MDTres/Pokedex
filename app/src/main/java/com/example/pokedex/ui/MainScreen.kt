@@ -116,7 +116,7 @@ fun MainScreen(
                 OutlinedTextField(
                     value = uiState.name,
                     onValueChange = { viewModle.onNameChange(it) },
-                    placeholder = { Text("Palabra") },
+                    placeholder = { Text("Escribe nombre o ID") },
                     singleLine = true,
                     modifier = Modifier
                         .padding(start = 8.dp, end = 8.dp)
@@ -244,6 +244,7 @@ fun MainScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
+                        .padding(16.dp)
                 ) {
 
                     Text(
