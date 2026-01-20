@@ -77,18 +77,80 @@ fun MainScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp), // altura suficiente para dos filas
                 title = {
-                    Text(
-                    text = "Pokedex",
-
-                    fontFamily = FontFamily(Font(R.font.pokemonfont)),
-                    color = PokedexYellow,
-                    fontSize = 34.sp
-                    ) },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = PokedexBlue
+                    Column {
+                        // Fila de arriba: título
+                        Text(
+                            text = "Pokedex",
+                            fontFamily = FontFamily(Font(R.font.pokemonfont)),
+                            color = PokedexYellow,
+                            fontSize = 34.sp
                         )
+
+                        Spacer(modifier = Modifier.height(8.dp)) // pequeño espacio entre filas
+
+                        // Fila de abajo: buscador
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp),
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                modifier = Modifier.size(50.dp),
+                                painter = painterResource(id = R.drawable.pokebola_pokeball_png_0),
+                                contentDescription = "Logo Rae",
+                            )
+                            OutlinedTextField(
+                                value = uiState.name,
+                                onValueChange = { viewModle.onNameChange(it) },
+                                placeholder = { Text("Escribe nombre o ID") },
+                                singleLine = true,
+                                modifier = Modifier
+                                    .padding(start = 8.dp, end = 8.dp)
+                                    .weight(1f),
+                                colors = TextFieldDefaults.colors(
+                                    focusedTextColor = Color.Black,
+                                    unfocusedTextColor = Color.Black,
+                                    focusedContainerColor = Color.White,
+                                    unfocusedContainerColor = Color.White,
+                                    cursorColor = Color.Black
+                                )
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                                    .background(PokedexRed)
+                                    .clickable {
+                                        scope.launch {
+                                            try {
+                                                val result = RetroFitClient.api.getPokemon(uiState.name.lowercase())
+                                                viewModle.updateResponse(result)
+                                            } catch (e: Exception) {
+                                                Log.e("API_ERROR", "Error: ${e.message}")
+                                            }
+                                        }
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Search,
+                                    contentDescription = "Buscar",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(35.dp)
+                                )
+                            }
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = PokedexBlue
+                )
             )
         },
         modifier = Modifier.systemBarsPadding()
@@ -98,59 +160,6 @@ fun MainScreen(
             background(Primario)
                 .fillMaxSize()
         ) {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    modifier = Modifier
-                        .size(50.dp),
-                    painter = painterResource(id = R.drawable.pokebola_pokeball_png_0),
-                    contentDescription = "Logo Rae",
-                )
-                OutlinedTextField(
-                    value = uiState.name,
-                    onValueChange = { viewModle.onNameChange(it) },
-                    placeholder = { Text("Escribe nombre o ID") },
-                    singleLine = true,
-                    modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp)
-                        .weight(1f),
-                    colors = TextFieldDefaults.colors(
-                        Color.Black
-                    )
-                )
-                Box(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .background(PokedexRed)
-                        .clickable {
-                            scope.launch {
-                                try {
-                                    val result = RetroFitClient.api.getPokemon(uiState.name.lowercase())
-
-                                    viewModle.updateResponse(result)
-                                } catch (e: Exception) {
-                                    Log.e("API_ERROR", "Error: ${e.message}")
-                                }
-                            }
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Search, // lupa
-                        contentDescription = "Buscar",
-                        tint = Color.White,
-                        modifier = Modifier.size(35.dp)
-                    )
-                }
-
-            }
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
