@@ -6,6 +6,7 @@ import coil.compose.AsyncImage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -87,7 +88,10 @@ fun MainScreen(
                             text = "Pokedex",
                             fontFamily = FontFamily(Font(R.font.pokemonfont)),
                             color = PokedexYellow,
-                            fontSize = 34.sp
+                            fontSize = 50.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+
                         )
 
                         Spacer(modifier = Modifier.height(8.dp)) // pequeño espacio entre filas
