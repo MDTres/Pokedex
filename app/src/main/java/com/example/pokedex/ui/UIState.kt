@@ -10,5 +10,6 @@ data class UIState(
     var name: String = "",
     var idPokedex: Int = 0,
     var isShiny: Boolean = false,
-    var response: Pokemon? = null
+    var response: Pokemon? = null,
+    var isFav: Boolean = false
 )

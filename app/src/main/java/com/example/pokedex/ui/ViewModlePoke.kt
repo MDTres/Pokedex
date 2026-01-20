@@ -11,6 +11,10 @@ class ViewModlePoke: ViewModel() {
     private val _uiState = mutableStateOf(UIState())
     val uiState: State<UIState> = _uiState
 
+    fun toggleFav() {
+        _uiState.value = _uiState.value.copy(isFav = !_uiState.value.isFav)
+    }
+
     fun onNameChange(text: String) {
         _uiState.value = _uiState.value.copy(name = text)
     }

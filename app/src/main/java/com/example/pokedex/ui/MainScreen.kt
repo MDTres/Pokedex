@@ -74,7 +74,6 @@ fun MainScreen(
 
     val scope = rememberCoroutineScope()
 
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -219,6 +218,34 @@ fun MainScreen(
                                     fontWeight = FontWeight.Medium
                                 )
                             }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    Column(horizontalAlignment = Alignment.Start) {
+                        Text(
+                            text = "Fav:",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clickable {
+                                    viewModle.toggleFav()
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AsyncImage(
+                                model = if (uiState.isFav) R.drawable.favsi else R.drawable.favno,
+                                contentDescription = uiState.response?.name,
+                                modifier = Modifier
+                                    .size(45.dp)
+                                    .align(Alignment.Center)
+                            )
                         }
                     }
                 }
