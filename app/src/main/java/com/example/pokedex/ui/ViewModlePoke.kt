@@ -3,13 +3,24 @@ package com.example.pokedex.ui
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.pokedex.R
 import com.example.pokedex.data.Pokemon
+import com.example.pokedex.data.PreferencesRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class ViewModlePoke: ViewModel() {
+class ViewModlePoke(
+    private val preferencesRepository: PreferencesRepository
+) : ViewModel() {
 
     private val _uiState = mutableStateOf(UIState())
     val uiState: State<UIState> = _uiState
+
+    // DataStore state
+    val isTopBarBottom = preferencesRepository.isTopBarBottom
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     fun toggleFav() {
         _uiState.value = _uiState.value.copy(isFav = !_uiState.value.isFav)
@@ -47,4 +58,9 @@ class ViewModlePoke: ViewModel() {
         }
     }
 
+    fun onPokeballClick() {
+        viewModelScope.launch {
+            preferencesRepository.toggleTopBar()
+        }
+    }
 }
