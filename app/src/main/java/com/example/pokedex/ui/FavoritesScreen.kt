@@ -16,12 +16,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pokedex.data.PokemonDao
-import com.example.pokedex.ui.theme.PokedexBlue
 import com.example.pokedex.ui.theme.Primario
 
 @Composable
 fun FavoritesScreen(pokemonDao: PokemonDao) {
-    // Observamos el Flow de la base de datos en tiempo real
+
     val favorites by pokemonDao.getAllFavorites().collectAsState(initial = emptyList())
 
     Column(

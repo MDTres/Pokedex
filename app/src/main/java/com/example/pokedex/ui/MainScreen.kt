@@ -48,7 +48,7 @@ fun MainScreen() {
     val uiState by viewModel.uiState
     val isBottom by viewModel.isTopBarBottom.collectAsState()
 
-    // Observamos los favoritos directamente desde el DAO
+
     val favoriteList by viewModel.pokemonDao.getAllFavorites().collectAsState(initial = emptyList())
 
     val scope = rememberCoroutineScope()
@@ -94,7 +94,7 @@ fun MainScreen() {
         },
         modifier = Modifier.systemBarsPadding()
     ) { padding ->
-        // Usamos LazyColumn para permitir el scroll si hay muchos favoritos
+
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
@@ -103,7 +103,7 @@ fun MainScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // --- BLOQUE INFO POKEMON ACTUAL ---
+
             item {
                 Row(
                     modifier = Modifier
@@ -198,7 +198,7 @@ fun MainScreen() {
                 )
             }
 
-            // --- BLOQUE TÍTULO FAVORITOS ---
+
             item {
                 Text(
                     text = "LISTA DE FAVORITOS",
@@ -209,7 +209,7 @@ fun MainScreen() {
                 )
             }
 
-            // --- LISTADO DE FAVORITOS DESDE ROOM ---
+
             if (favoriteList.isEmpty()) {
                 item {
                     Text("No hay favoritos guardados", color = Color.White.copy(alpha = 0.5f), modifier = Modifier.padding(16.dp))
@@ -220,7 +220,7 @@ fun MainScreen() {
                 }
             }
 
-            // Espacio final para que no tape la BottomBar
+
             item { Spacer(modifier = Modifier.height(120.dp)) }
         }
     }
