@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,16 +42,30 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
+    val context = LocalContext.current
     val viewModel: ViewModlePoke = viewModel(
         factory = ViewModelFactory(LocalContext.current)
     )
 
     val uiState by viewModel.uiState
     val isBottom by viewModel.isTopBarBottom.collectAsState()
+    val voiceParser = remember { VoiceToTextParser(context) }
 
+    // Extraemos la lógica del micro a una variable para no repetir código
+    val onMicAction = {
+        val hasPermission = context.checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        if (hasPermission) {
+            voiceParser.startListening { text ->
+                viewModel.onNameChange(text)
+            }
+        } else {
+            (context as android.app.Activity).requestPermissions(
+                arrayOf(android.Manifest.permission.RECORD_AUDIO), 0
+            )
+        }
+    }
 
     val favoriteList by viewModel.pokemonDao.getAllFavorites().collectAsState(initial = emptyList())
-
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -58,6 +73,7 @@ fun MainScreen() {
             if (!isBottom) {
                 TopBar(
                     uiState = uiState,
+                    isListening = voiceParser.isListening.value,
                     onSearchClick = {
                         scope.launch {
                             try {
@@ -69,7 +85,8 @@ fun MainScreen() {
                         }
                     },
                     onPokeballClick = { viewModel.onPokeballClick() },
-                    onNameChange = { viewModel.onNameChange(it) }
+                    onNameChange = { viewModel.onNameChange(it) },
+                    onMicClick = onMicAction
                 )
             }
         },
@@ -77,6 +94,7 @@ fun MainScreen() {
             if (isBottom) {
                 TopBar(
                     uiState = uiState,
+                    isListening = voiceParser.isListening.value,
                     onSearchClick = {
                         scope.launch {
                             try {
@@ -88,7 +106,8 @@ fun MainScreen() {
                         }
                     },
                     onPokeballClick = { viewModel.onPokeballClick() },
-                    onNameChange = { viewModel.onNameChange(it) }
+                    onNameChange = { viewModel.onNameChange(it) },
+                    onMicClick = onMicAction
                 )
             }
         },
@@ -102,7 +121,6 @@ fun MainScreen() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
 
             item {
                 Row(
@@ -198,7 +216,6 @@ fun MainScreen() {
                 )
             }
 
-
             item {
                 Text(
                     text = "LISTA DE FAVORITOS",
@@ -209,7 +226,6 @@ fun MainScreen() {
                 )
             }
 
-
             if (favoriteList.isEmpty()) {
                 item {
                     Text("No hay favoritos guardados", color = Color.White.copy(alpha = 0.5f), modifier = Modifier.padding(16.dp))
@@ -219,7 +235,6 @@ fun MainScreen() {
                     FavoriteCard(id = poke.id, name = poke.name)
                 }
             }
-
 
             item { Spacer(modifier = Modifier.height(120.dp)) }
         }
@@ -252,7 +267,9 @@ fun TopBar(
     uiState: UIState,
     onSearchClick: () -> Unit,
     onPokeballClick: () -> Unit,
-    onNameChange: (String) -> Unit
+    onMicClick: () -> Unit,
+    onNameChange: (String) -> Unit,
+    isListening : Boolean
 ) {
     Surface(
         color = PokedexBlue,
@@ -292,7 +309,17 @@ fun TopBar(
                         unfocusedContainerColor = Color.White,
                         focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
-                    )
+                    ), trailingIcon = {
+                        IconButton( onClick = {
+                                    onMicClick()
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.microfono),
+                                contentDescription = "microfono",
+                                tint = if (uiState.isListening) Color.Red else Color.Gray
+                            )
+                        }
+                    }
                 )
                 Box(
                     modifier = Modifier.size(50.dp).clip(CircleShape).background(PokedexRed).clickable { onSearchClick() },

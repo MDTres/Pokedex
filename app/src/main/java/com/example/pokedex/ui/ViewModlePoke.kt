@@ -90,4 +90,7 @@ class ViewModlePoke(
             else -> R.drawable.type_unknown
         }
     }
+    fun setListening(listening: Boolean){
+        _uiState.value=uiState.value.copy(isListening = listening)
+    }
 }

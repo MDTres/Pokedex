@@ -11,5 +11,6 @@ data class UIState(
     var idPokedex: Int = 0,
     var isShiny: Boolean = false,
     var response: Pokemon? = null,
-    var isFav: Boolean = false
+    var isFav: Boolean = false,
+    val isListening : Boolean = false
 )
