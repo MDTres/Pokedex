@@ -73,4 +73,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.androidx.compose.ui.tooling)
-}
+
+    // WorkManager dependency
+    implementation("androidx.work:work-runtime-ktx:2.8.1")}

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -30,19 +31,40 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import coil.compose.AsyncImage
 import com.example.pokedex.R
 import com.example.pokedex.data.RetroFitClient
+import com.example.pokedex.data.SyncFavoritesWorker
 import com.example.pokedex.ui.theme.PokedexBlue
 import com.example.pokedex.ui.theme.PokedexRed
 import com.example.pokedex.ui.theme.PokedexYellow
 import com.example.pokedex.ui.theme.Primario
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
     val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val syncRequest= PeriodicWorkRequestBuilder<SyncFavoritesWorker>(24, TimeUnit.HOURS)
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "sync_pokedex_favorites",
+            ExistingPeriodicWorkPolicy.KEEP,
+            syncRequest)
+    }
     val viewModel: ViewModlePoke = viewModel(
         factory = ViewModelFactory(LocalContext.current)
     )

@@ -8,6 +8,9 @@ interface PokemonDao {
     @Query("SELECT * FROM favorites")
     fun getAllFavorites(): Flow<List<FavoritePokemon>>
 
+    @Query("SELECT * FROM favorites")
+    suspend fun getAllFavoritesSync(): List<FavoritePokemon>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavorite(pokemon: FavoritePokemon)
 
